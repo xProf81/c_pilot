@@ -73,7 +73,18 @@ namespace c_pilot
 
         private void button3_Click(object sender, EventArgs e)
         {
- //           Mouse.DoubleClick(EveWindow, new Point(1490, 288));
+            DateTime st, end;
+            st = DateTime.Now;
+            Point rz = Pilot1.FindAllWindow(1);
+            end = DateTime.Now;
+
+            textBox1.Text = st.ToString()+"}}} x= " + rz.X.ToString() + " y= " + rz.Y.ToString()+" {{{"+end.ToString();
+
+            st = DateTime.Now;
+            rz = Pilot1.FindWindow(1);
+            end = DateTime.Now;
+
+            textBox1.Text = st.ToString() + "}}} x= " + rz.X.ToString() + " y= " + rz.Y.ToString() + " {{{" + end.ToString();
         }
     }
 }

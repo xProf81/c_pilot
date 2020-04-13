@@ -15,7 +15,7 @@ namespace c_pilot
     class Bot
     {
       //  [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
+        public struct RECT
         {
             public int left;        // x position of upper-left corner
             public int top;         // y position of upper-left corner
@@ -61,7 +61,47 @@ namespace c_pilot
             templates = new Bitmap[klvBmp];
         }
 
-         public bool Start()
+        public Point FindAllWindow(int imageNum)
+        {
+            Window.ShowWindow(hWnd, 3);
+            Window.SetFrontWindow(windowName);
+            Utility.Delay(1000,3000);
+            Bitmap screen = ScreenShot.Create(hWnd);
+            ImageData screenshot = new ImageData(screen);
+
+            Rectangle rez;
+            rez = Template.Image(screenshot, new ImageData(templates[imageNum]), 25);
+            if (rez.X!=0&&rez.Y!=0)
+            {
+                overViewIco.top = 0;
+                overViewIco.bottom = screen.Height;
+                overViewIco.left = rez.X - 10;
+                overViewIco.right = rez.Y + templates[imageNum].Width + 10;
+            }
+            return new Point(rez.X, rez.Y);
+        }
+
+        public Point FindWindow(int imageNum)
+        {
+            Window.ShowWindow(hWnd, 3);
+            Window.SetFrontWindow(windowName);
+            Utility.Delay(1000, 3000);
+            Bitmap screen = ScreenShot.Create(overViewIco.left, overViewIco.top, overViewIco.right-overViewIco.left,overViewIco.bottom-overViewIco.top);
+            ImageData screenshot = new ImageData(screen);
+            screen.Save("screenshot.bmp");
+            Rectangle rez;
+            rez = Template.Image(screenshot, new ImageData(templates[imageNum]), 25);
+            if (rez.X != 0 && rez.Y != 0)
+            {
+                overViewIco.top = 0;
+                overViewIco.bottom = screen.Height;
+                overViewIco.left = rez.X - 10;
+                overViewIco.right = rez.Y + templates[imageNum].Width + 10;
+            }
+            return new Point(rez.X, rez.Y);
+        }
+
+        public bool Start()
         {
                 hWnd = Window.FindWindowByWindowTitle(windowName);
                 if (hWnd.ToInt64() != 0)
@@ -210,7 +250,11 @@ namespace c_pilot
         bool LoadImageTemplates()
         {
             bool rez = true;
-            templates[0] = new Bitmap("gate1.bmp");
+            for (int i = 0; i < klvBmp; i++)
+            {
+                templates[i] = new Bitmap(i.ToString()+".bmp");
+                Log("Подгружена картинка "+i.ToString());
+            }
             return rez;
         }
 
