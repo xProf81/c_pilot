@@ -35,6 +35,8 @@
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -84,18 +86,39 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "EVE - Tapko Woman",
-            "EVE - Chu Muni"});
+            "EVE - Chu Muni",
+            "EVE - Xepro Glaz"});
             this.comboBox1.Location = new System.Drawing.Point(111, 50);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(284, 24);
             this.comboBox1.TabIndex = 4;
             this.comboBox1.Text = "EVE - Tapko Woman";
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(12, 82);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(93, 29);
+            this.button3.TabIndex = 5;
+            this.button3.Text = "test dblclk";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(111, 85);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(284, 22);
+            this.textBox3.TabIndex = 6;
+            this.textBox3.Text = "1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.textBox2);
@@ -116,6 +139,8 @@
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox textBox3;
     }
 }
 
