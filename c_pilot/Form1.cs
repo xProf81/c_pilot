@@ -15,7 +15,8 @@ namespace c_pilot
 {
     public partial class Form1 : Form
     {
-        IntPtr EveWindow;
+        Bot Pilot1;
+
         
         public Form1()
         {
@@ -24,20 +25,22 @@ namespace c_pilot
 
         private void button1_Click(object sender, EventArgs e)
         {
-            EveWindow= Window.FindWindowByWindowTitle(comboBox1.Text);
-            if (EveWindow.ToInt64() == 0) textBox2.Text = "Error";
-            else
-            {
-                textBox2.Text = "Window ok";
-                Window.ShowWindow(EveWindow,3);
-                Window.SetFrontWindow(comboBox1.Text);
-            }
-
+            Pilot1 = new Bot(comboBox1.Text,1);
+            if (Pilot1.isStartOk) textBox2.Text = "Window ok";
+            /*            EveWindow= Window.FindWindowByWindowTitle(comboBox1.Text);
+                        if (EveWindow.ToInt64() == 0) textBox2.Text = "Error";
+                        else
+                        {
+                            textBox2.Text = "Window ok";
+                            Window.ShowWindow(EveWindow,3);
+                            Window.SetFrontWindow(comboBox1.Text);
+                        }
+            */
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (EveWindow.ToInt64() != 0)
+ /*           if (EveWindow.ToInt64() != 0)
             {
                 Bitmap bmpGate = new Bitmap(Image.FromFile("gate1.bmp"));
                 ImageData gate = new ImageData(bmpGate);
@@ -59,41 +62,18 @@ namespace c_pilot
                 Mouse.LeftClick(EveWindow, new Point((int)(x / scale), (int)(y / scale)));
             }
             timer1.Stop();
-
+*/
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Window.ShowWindow(EveWindow,3);
-            Window.SetFrontWindow(comboBox1.Text);
-            timer1.Start();
+            Pilot1.Start();            
         }
 
-        [DllImport("gdi32.dll")]
-        static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
-        public enum DeviceCap
-        {
-            VERTRES = 10,
-            DESKTOPVERTRES = 117,
-
-        }
-
-
-        private float getScalingFactor()
-        {
-            Graphics g = Graphics.FromHwnd(IntPtr.Zero);
-            IntPtr desktop = g.GetHdc();
-            int LogicalScreenHeight = GetDeviceCaps(desktop, (int)DeviceCap.VERTRES);
-            int PhysicalScreenHeight = GetDeviceCaps(desktop, (int)DeviceCap.DESKTOPVERTRES);
-
-            float ScreenScalingFactor = (float)PhysicalScreenHeight / (float)LogicalScreenHeight;
-
-            return ScreenScalingFactor; // 1.25 = 125%
-        }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Mouse.DoubleClick(EveWindow, new Point(1490, 288));
+ //           Mouse.DoubleClick(EveWindow, new Point(1490, 288));
         }
     }
 }
