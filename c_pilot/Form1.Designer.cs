@@ -51,9 +51,10 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(111, 15);
+            this.textBox1.Location = new System.Drawing.Point(401, 15);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(284, 22);
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(387, 22);
             this.textBox1.TabIndex = 1;
             this.textBox1.Text = "1";
             // 
@@ -64,15 +65,16 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(401, 15);
+            this.textBox2.Location = new System.Drawing.Point(401, 50);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(100, 22);
+            this.textBox2.Size = new System.Drawing.Size(387, 22);
             this.textBox2.TabIndex = 2;
             this.textBox2.Text = "No window";
             // 
             // button2
             // 
+            this.button2.Enabled = false;
             this.button2.Location = new System.Drawing.Point(12, 47);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(93, 29);
@@ -88,7 +90,7 @@
             "EVE - Tapko Woman",
             "EVE - Chu Muni",
             "EVE - Xepro Glaz"});
-            this.comboBox1.Location = new System.Drawing.Point(111, 50);
+            this.comboBox1.Location = new System.Drawing.Point(111, 15);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(284, 24);
             this.comboBox1.TabIndex = 4;
@@ -96,6 +98,7 @@
             // 
             // button3
             // 
+            this.button3.Enabled = false;
             this.button3.Location = new System.Drawing.Point(12, 82);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(93, 29);
@@ -106,7 +109,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(111, 85);
+            this.textBox3.Location = new System.Drawing.Point(111, 50);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(284, 22);
             this.textBox3.TabIndex = 6;

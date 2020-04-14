@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 using BotSuite;
 using BotSuite.ImageLibrary;
 using System.Xml;
+using c_pilot.Properties;
 
 namespace c_pilot
 {
     class Bot
     {
-      //  [StructLayout(LayoutKind.Sequential)]
         public struct RECT
         {
             public int left;        // x position of upper-left corner
@@ -23,7 +23,7 @@ namespace c_pilot
             public int bottom;      // y position of lower-right corner
         }
 
-        private struct CONFIG
+        private struct CONFIG 
         {
             public int maxMouseSpeed;
             public int minMouseSpeed;
@@ -37,8 +37,26 @@ namespace c_pilot
         private CONFIG cfg;
 
         private string windowName;
+
+        float scaleFactor { get {
+                return (float)PhysicalScreenHeight / (float)LogicalScreenHeight;} }
+        int LogicalScreenHeight{get
+            {
+                Graphics g = Graphics.FromHwnd(IntPtr.Zero);
+                IntPtr desktop = g.GetHdc();
+                return GetDeviceCaps(desktop, (int)DeviceCap.VERTRES);
+            }
+        }
+        int PhysicalScreenHeight {get
+            {
+                Graphics g = Graphics.FromHwnd(IntPtr.Zero);
+                IntPtr desktop = g.GetHdc();
+                return GetDeviceCaps(desktop, (int)DeviceCap.DESKTOPVERTRES);
+            }
+        }
+
         private IntPtr hWnd;
-        const int klvBmp = 4;
+        const int klvBmp = 16;
         private Bitmap[] templates;
         private RECT overViewIco;
         private RECT overViewNames;
@@ -63,22 +81,34 @@ namespace c_pilot
 
         public Point FindAllWindow(int imageNum)
         {
-            Window.ShowWindow(hWnd, 3);
+            
+            Window.ShowWindow(hWnd, 9);
             Window.SetFrontWindow(windowName);
-            Utility.Delay(1000,3000);
+            Utility.Delay(200,300);
             Bitmap screen = ScreenShot.Create(hWnd);
+            if (screen.Height < PhysicalScreenHeight - 70)
+            {
+                Window.ShowWindow(hWnd, 3);
+                Utility.Delay(200, 300);
+                screen = ScreenShot.Create(hWnd);
+            }
             ImageData screenshot = new ImageData(screen);
+            screen.Save("screen_full.bmp");
 
             Rectangle rez;
-            rez = Template.Image(screenshot, new ImageData(templates[imageNum]), 25);
-            if (rez.X!=0&&rez.Y!=0)
+            for (int i = imageNum; i < imageNum + 4;i++)
             {
-                overViewIco.top = 0;
-                overViewIco.bottom = screen.Height;
-                overViewIco.left = rez.X - 10;
-                overViewIco.right = rez.Y + templates[imageNum].Width + 10;
+                rez = Template.Image(screenshot, new ImageData(templates[i]), 25);
+                if (rez.X != 0 && rez.Y != 0)
+                {
+                    overViewIco.top = 0;
+                    overViewIco.bottom = screen.Height;
+                    overViewIco.left = rez.X - 10;
+                    overViewIco.right = rez.Y + templates[imageNum].Width + 10;
+                    return new Point(rez.X, rez.Y);
+                }
             }
-            return new Point(rez.X, rez.Y);
+            return new Point(0, 0);
         }
 
         public Point FindWindow(int imageNum)
@@ -252,7 +282,7 @@ namespace c_pilot
             bool rez = true;
             for (int i = 0; i < klvBmp; i++)
             {
-                templates[i] = new Bitmap(i.ToString()+".bmp");
+                templates[i] = GetImageByName("_"+i.ToString());
                 Log("Подгружена картинка "+i.ToString());
             }
             return rez;
@@ -271,17 +301,13 @@ namespace c_pilot
             DESKTOPVERTRES = 117,
         }
 
-        private float getScalingFactor()  // получить процент увеличения шрифта
+        public static Bitmap GetImageByName(string imageName)
         {
-            Graphics g = Graphics.FromHwnd(IntPtr.Zero);
-            IntPtr desktop = g.GetHdc();
-            int LogicalScreenHeight = GetDeviceCaps(desktop, (int)DeviceCap.VERTRES);
-            int PhysicalScreenHeight = GetDeviceCaps(desktop, (int)DeviceCap.DESKTOPVERTRES);
+            System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
+            string resourceName = asm.GetName().Name + ".Properties.Resources";
+            var rm = new System.Resources.ResourceManager(resourceName, asm);
+            return (Bitmap)rm.GetObject(imageName);
 
-            float ScreenScalingFactor = (float)PhysicalScreenHeight / (float)LogicalScreenHeight;
-
-            return ScreenScalingFactor; // 1.25 = 125%
         }
-    
     }
 }

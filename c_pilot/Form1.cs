@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BotSuite;
 using BotSuite.ImageLibrary;
+using c_pilot.Properties;
 
 namespace c_pilot
 {
@@ -26,16 +27,9 @@ namespace c_pilot
         private void button1_Click(object sender, EventArgs e)
         {
             Pilot1 = new Bot(comboBox1.Text,1);
-            if (Pilot1.isStartOk) textBox2.Text = "Window ok";
-            /*            EveWindow= Window.FindWindowByWindowTitle(comboBox1.Text);
-                        if (EveWindow.ToInt64() == 0) textBox2.Text = "Error";
-                        else
-                        {
-                            textBox2.Text = "Window ok";
-                            Window.ShowWindow(EveWindow,3);
-                            Window.SetFrontWindow(comboBox1.Text);
-                        }
-            */
+            if (Pilot1.Start()) textBox2.Text = "Window ok";
+            button2.Enabled = Pilot1.isStartOk;
+            
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -67,24 +61,23 @@ namespace c_pilot
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Pilot1.Start();            
+            DateTime st, end;
+            st = DateTime.Now;
+            Point rz = Pilot1.FindAllWindow(0);
+            end = DateTime.Now;
+
+            textBox1.Text = st.ToString() + "}}} x= " + rz.X.ToString() + " y= " + rz.Y.ToString() + " {{{" + end.ToString();
+
+            st = DateTime.Now;
+            //      rz = Pilot1.FindWindow(1);
+            end = DateTime.Now;
+
+            textBox2.Text = st.ToString() + "}}} x= " + rz.X.ToString() + " y= " + rz.Y.ToString() + " {{{" + end.ToString();
         }
 
 
         private void button3_Click(object sender, EventArgs e)
         {
-            DateTime st, end;
-            st = DateTime.Now;
-            Point rz = Pilot1.FindAllWindow(1);
-            end = DateTime.Now;
-
-            textBox1.Text = st.ToString()+"}}} x= " + rz.X.ToString() + " y= " + rz.Y.ToString()+" {{{"+end.ToString();
-
-            st = DateTime.Now;
-            rz = Pilot1.FindWindow(1);
-            end = DateTime.Now;
-
-            textBox1.Text = st.ToString() + "}}} x= " + rz.X.ToString() + " y= " + rz.Y.ToString() + " {{{" + end.ToString();
         }
     }
 }
