@@ -87,14 +87,14 @@
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
-            "EVE - Tapko Woman",
+            "EVE - Xepro Glaz",
             "EVE - Chu Muni",
-            "EVE - Xepro Glaz"});
+            "EVE - Tapko Woman"});
             this.comboBox1.Location = new System.Drawing.Point(111, 15);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(284, 24);
             this.comboBox1.TabIndex = 4;
-            this.comboBox1.Text = "EVE - Tapko Woman";
+            this.comboBox1.Text = "EVE - Xepro Glaz";
             // 
             // button3
             // 

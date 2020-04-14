@@ -10,6 +10,7 @@ using BotSuite;
 using BotSuite.ImageLibrary;
 using System.Xml;
 using c_pilot.Properties;
+using System.Windows.Forms;
 
 namespace c_pilot
 {
@@ -23,7 +24,7 @@ namespace c_pilot
             public int bottom;      // y position of lower-right corner
         }
 
-        private struct CONFIG 
+        private struct CONFIG
         {
             public int maxMouseSpeed;
             public int minMouseSpeed;
@@ -39,15 +40,15 @@ namespace c_pilot
         private string windowName;
 
         float scaleFactor { get {
-                return (float)PhysicalScreenHeight / (float)LogicalScreenHeight;} }
-        int LogicalScreenHeight{get
+                return (float)PhysicalScreenHeight / (float)LogicalScreenHeight; } }
+        int LogicalScreenHeight { get
             {
                 Graphics g = Graphics.FromHwnd(IntPtr.Zero);
                 IntPtr desktop = g.GetHdc();
                 return GetDeviceCaps(desktop, (int)DeviceCap.VERTRES);
             }
         }
-        int PhysicalScreenHeight {get
+        int PhysicalScreenHeight { get
             {
                 Graphics g = Graphics.FromHwnd(IntPtr.Zero);
                 IntPtr desktop = g.GetHdc();
@@ -59,6 +60,7 @@ namespace c_pilot
         const int klvBmp = 16;
         private Bitmap[] templates;
         private RECT overViewIco;
+        public RECT GetOverViewIco() { return overViewIco; }
         private RECT overViewNames;
         private RECT mainWindow;
         private bool _isStartOk = true;
@@ -71,7 +73,7 @@ namespace c_pilot
 
         public bool isStartOk { get { return _isStartOk; } }
 
-        public Bot(string winName,int numberOfBot)
+        public Bot(string winName, int numberOfBot)
         {
             windowName = winName;
             number = numberOfBot;
@@ -79,57 +81,114 @@ namespace c_pilot
             templates = new Bitmap[klvBmp];
         }
 
-        public Point FindAllWindow(int imageNum)
+        private void showEveWindow(IntPtr _hWnd)
         {
-            
-            Window.ShowWindow(hWnd, 9);
+            Window.ShowWindow(_hWnd, 9);
             Window.SetFrontWindow(windowName);
-            Utility.Delay(200,300);
-            Bitmap screen = ScreenShot.Create(hWnd);
+            Utility.Delay(200, 300);
+            Bitmap screen = ScreenShot.Create(_hWnd);
             if (screen.Height < PhysicalScreenHeight - 70)
             {
-                Window.ShowWindow(hWnd, 3);
+                Window.ShowWindow(_hWnd, 3);
                 Utility.Delay(200, 300);
-                screen = ScreenShot.Create(hWnd);
             }
+        }
+        private Point FindBigWindow(int imageNum, bool isNeedScreen = false)
+        {
+            showEveWindow(hWnd);
+            Bitmap screen = ScreenShot.Create(hWnd);
             ImageData screenshot = new ImageData(screen);
-            screen.Save("screen_full.bmp");
-
+            Log("сделан полный скрин");
+            if (isNeedScreen) screen.Save("screen_full.bmp");
             Rectangle rez;
-            for (int i = imageNum; i < imageNum + 4;i++)
+            for (int i = imageNum; i < imageNum + 4; i++)
             {
                 rez = Template.Image(screenshot, new ImageData(templates[i]), 25);
                 if (rez.X != 0 && rez.Y != 0)
                 {
+                    Log("Найден рис " + i + " в координатах x=" + rez.X + " y = " + rez.Y);
                     overViewIco.top = 0;
                     overViewIco.bottom = screen.Height;
                     overViewIco.left = rez.X - 10;
-                    overViewIco.right = rez.Y + templates[imageNum].Width + 10;
+                    overViewIco.right = rez.X + templates[imageNum].Width + 10;
                     return new Point(rez.X, rez.Y);
                 }
             }
+            Log("Шаблон" + imageNum + " не найден на скрине");
+            return new Point(0, 0);
+        }
+        private Point FindSmallWindow(int imageNum, RECT area, bool isNeedScreen = false)
+        {
+            showEveWindow(hWnd);
+            Bitmap screen = ScreenShot.Create(area.left, area.top, area.right - area.left, area.bottom - area.top);
+
+            ImageData screenshot = new ImageData(screen);
+            Log("сделан малый скриншот по координатам " + area.left + "," + area.top + "," + (area.right - area.left) + "," + (area.bottom - area.top));
+            if (isNeedScreen) screen.Save("screen_full.bmp");
+            Rectangle rez;
+            rez = Template.Image(screenshot, new ImageData(templates[imageNum]), 25);
+            for (int i = imageNum; i < imageNum + 4; i++)
+            {
+                if (rez.X != 0 && rez.Y != 0)
+                {
+                    Log("(small)Найден рис " + i + " в координатах x=" + rez.X + " y = " + rez.Y);
+                    overViewIco.top = 0;
+                    overViewIco.bottom = screen.Height;
+                    overViewIco.left = rez.X - 10;
+                    overViewIco.right = rez.Y + templates[i].Width + 10;
+                    return new Point(rez.X + area.left, rez.Y);
+                }
+            }
+            Log("Рис "+imageNum + "не найден на малом скрине");
             return new Point(0, 0);
         }
 
-        public Point FindWindow(int imageNum)
+        private Point FindWindow(int imageNum, RECT area, bool isNeedScreen = false)
         {
-            Window.ShowWindow(hWnd, 3);
-            Window.SetFrontWindow(windowName);
-            Utility.Delay(1000, 3000);
-            Bitmap screen = ScreenShot.Create(overViewIco.left, overViewIco.top, overViewIco.right-overViewIco.left,overViewIco.bottom-overViewIco.top);
-            ImageData screenshot = new ImageData(screen);
-            screen.Save("screenshot.bmp");
-            Rectangle rez;
-            rez = Template.Image(screenshot, new ImageData(templates[imageNum]), 25);
-            if (rez.X != 0 && rez.Y != 0)
-            {
-                overViewIco.top = 0;
-                overViewIco.bottom = screen.Height;
-                overViewIco.left = rez.X - 10;
-                overViewIco.right = rez.Y + templates[imageNum].Width + 10;
-            }
-            return new Point(rez.X, rez.Y);
+            Point rez = new Point(0, 0);
+            if (area.bottom != 0&&area.right!=0)rez = FindSmallWindow(imageNum, area, isNeedScreen);
+            if (rez.X == 0 && rez.Y == 0) rez = FindBigWindow(imageNum, isNeedScreen);
+            return rez;
         }
+
+        private bool MouseMove(int x,int y)
+        {
+            return MouseMove(new Point (x,y));
+        }
+
+        private bool MouseMove(Point pnt,bool scalefactor=false, int rand = 0)
+        {
+            int rnd = 0;
+            if (rand > 0) rnd=Utility.Random(0, rand);
+            Log("Клик мышой Х=" + pnt.X + " Y=" + pnt.Y + " scale= " + scalefactor.ToString() + " rand=" + rnd.ToString());
+            if (scalefactor) return Mouse.Move(new Point((int)(pnt.X / scaleFactor)+rnd, (int)(pnt.Y / scaleFactor) + rnd), true, Utility.Random(100, 150));
+            else return Mouse.Move(new Point(pnt.X + rnd, pnt.Y + rnd), true, Utility.Random(100, 150));
+        }
+
+        private bool MouseClick(Point point,Keys key)
+        {
+            if (MouseMove(point, true, 12))
+            {
+                Keyboard.HoldKey(key);
+                Mouse.DoubleClick();
+            }
+
+            
+            return true;
+        }
+
+        public bool MouseClickOverViewIco(int img,Keys key)
+        {
+            Point coord;
+            coord=FindWindow(img, overViewIco,true);
+            if(coord.X!=0&&coord.Y!=0)
+            {
+
+                MouseClick(coord, key);
+            }
+            return true;
+        }
+
 
         public bool Start()
         {
