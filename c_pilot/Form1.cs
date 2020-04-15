@@ -72,7 +72,6 @@ namespace c_pilot
             st = DateTime.Now;
             rz = Pilot1.MouseClickOverViewIco(4, Keys.S);
             end = DateTime.Now;
-            // Pilot1.MouseMove(rz);
             textBox2.Text = st.ToString() + "}}}  " + rz.ToString() + " {{{" + end.ToString();
         }
 
